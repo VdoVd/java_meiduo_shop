@@ -1,0 +1,16 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: sms-service
+
+  rabbitmq:
+    host: ly-mq
+    username: heima
+    password: heima
+    virtual-host: /leyou
+
+logging:
+  level:
+    com.leyou: debug

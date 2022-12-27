@@ -1,0 +1,51 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: auth-service
+
+
+  jackson:
+    default-property-inclusion: non_null #如果某个对象的属性值为空则封装json时会忽略此属性
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://ly-mysql:3306/heima?useSSL=false
+    username: root
+    password: root
+
+  redis:
+    host: ly-redis
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ly-registry:10086/eureka
+
+
+logging:
+  level:
+    com.leyou: debug
+
+
+ly:
+  oss:
+    accessKeyId: LTAI4G8ES7QxxVmTNiCidtAn
+    accessKeySecret: tEgqDEN4xr43Leqxl5sZD3gpirYibs
+    host: http://leyou-paper.oss-cn-shanghai.aliyuncs.com # 访问oss的bucket的域名
+    endpoint: oss-cn-shanghai.aliyuncs.com # 你选择的oss服务器的地址
+    dir: "heima01" # 保存到bucket的某个子目录
+    expireTime: 1200000 # 过期时间，单位是ms
+    maxFileSize: 5242880 #文件大小限制，这里是5M
+
+  jwt:
+    key: helloWorldJavaLeyouAuthServiceSecretKey
+
+
+mybatis-plus:
+  type-aliases-package: com.leyou.auth.entity
+  global-config:
+    db-config:
+      id-type: auto
+      insert-strategy: not_empty
+      update-strategy: not_empty

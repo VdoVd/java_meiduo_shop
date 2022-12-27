@@ -1,0 +1,44 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: item-service
+
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://ly-mysql:3306/heima?useSSL=false
+    username: root
+    password: root
+
+  jackson:
+    default-property-inclusion: non_null #如果某个对象的属性值为空则封装json时会忽略此属性
+  rabbitmq:
+    host: ly-mq
+    username: heima
+    password: heima
+    virtual-host: /leyou
+    publisher-confirms: true #打开发送确认
+    template:
+      retry:
+        initial-interval: 1000ms #默认初始化重试间隔
+        multiplier: 2  #倍增数
+        max-interval: 8000ms #最大重试间隔
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ly-registry:10086/eureka
+
+
+mybatis-plus:
+  type-aliases-package: com.leyou.item.entity #包扫描
+  global-config:
+    db-config:
+      id-type: auto #主键生成策略 auto，数据库自增
+      insert-strategy: NOT_EMPTY #属性为空，sql语句不包含此属性
+      update-strategy: NOT_EMPTY
+
+logging:
+  level:
+    com.leyou: debug

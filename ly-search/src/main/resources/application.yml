@@ -1,0 +1,28 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: search-service
+
+  jackson:
+    default-property-inclusion: non_null #如果某个对象的属性值为空则封装json时会忽略此属性
+
+  rabbitmq:
+    host: ly-mq
+    username: heima
+    password: heima
+    virtual-host: /leyou
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ly-registry:10086/eureka
+
+elasticsearch:
+  hosts: http://192.168.206.99:9200
+
+logging:
+  level:
+    com.leyou: debug

@@ -1,0 +1,96 @@
+server:
+  port: 10010
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ly-registry:10086/eureka
+hystrix:
+  command:
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 6000 # 熔断超时时长：6000ms
+
+    HystrixCommandKey:
+      execution:
+        isolation:
+          semaphore:
+            maxConcurrentRequests: 50
+ribbon:
+  ConnectTimeout: 500 # ribbon链接超时时长
+  ReadTimeout: 2000 # ribbon读取超时时长
+spring:
+  application:
+    name: ly-gateway
+  cloud:
+    gateway:
+      globalcors: # 全局的跨域处理
+        add-to-simple-url-handler-mapping: true # 是否将当前cors配置加入到SimpleUrlHandlerMapping中，解决options请求被拦截问题
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: # 允许哪些网站的跨域请求
+              - "http://manage.leyou.com"
+              - "http://www.leyou.com"
+            allowedMethods: # 允许的跨域ajax的请求方式
+              - "GET"
+              - "POST"
+              - "DELETE"
+              - "PUT"
+              - "OPTIONS"
+            allowedHeaders: "*" # 允许在请求中携带的头信息
+            allowCredentials: true # 是否允许携带cookie
+            maxAge: 360000 # 这次跨域检测的有效期
+
+
+      default-filters: # 默认过滤项
+        - StripPrefix=1 # 去除路由前缀
+        - name: Hystrix # 指定过滤工厂名称（可以是任意过滤工厂类型）
+          args: # 指定过滤的参数
+            name: fallbackcmd  # hystrix的指令名
+            fallbackUri: forward:/hystrix/fallback # 失败后的跳转路径
+        - name: RequestRateLimiter #请求数限流 名字不能随便写
+          args:
+            key-resolver: "#{@ipKeyResolver}" # 指定一个key生成器,SPel表达式
+            redis-rate-limiter.replenishRate: 2000 # 生成令牌的速率
+            redis-rate-limiter.burstCapacity: 10000 # 桶的容量
+
+      routes:
+        - id: item-service # 商品微服务
+          uri: lb://item-service
+          predicates:
+            - Path=/item/**
+
+        - id: auth-service # 授权微服务
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+
+        - id: search-service # 授权微服务
+          uri: lb://search-service
+          predicates:
+            - Path=/search/**
+
+        - id: user-service # 用户微服务
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+
+        - id: trade-service # 交易微服务
+          uri: lb://trade-service
+          predicates:
+            - Path=/trade/**
+
+  redis:
+    host: ly-redis
+
+
+logging:
+  level:
+    com.leyou: debug
+
+
+
+ly:
+  auth:
+    clientId: api-gateway
+    secret: 1234

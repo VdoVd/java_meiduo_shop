@@ -1,0 +1,75 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: trade-service
+
+  jackson:
+    default-property-inclusion: non_null #如果某个对象的属性值为空则封装json时会忽略此属性
+  data:
+    mongodb:
+      uri: mongodb://leyou:123@ly-mongo/carts
+
+  redis:
+    host: ly-redis
+
+
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://ly-mysql:3306/heima?useSSL=false
+    username: root
+    password: root
+
+
+  rabbitmq:
+    host: ly-mq
+    username: heima
+    password: heima
+    virtual-host: /leyou
+    template:
+      retry:
+        enabled: true
+        initial-interval: 10000ms
+        max-interval: 80000ms
+        multiplier: 2
+    publisher-confirms: true
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://ly-registry:10086/eureka
+
+
+logging:
+  level:
+    com.leyou: debug
+
+
+ly:
+  auth:
+    clientId: trade-service
+    secret: 1234
+    excludeFilterPaths:
+      - /pay/wx/notify
+      - /error
+
+
+
+  pay:
+    wx:
+      appID: wx8397f8696b538317 #商户信息
+      mchID: 1473426802 #商户信息
+      key: T6m9iK73b0kn9g5v426MKfHQH7X8rKwb
+      notifyUrl: http://vubfvb.natappfree.cc/trade/pay/wx/notify
+      spbillCreateIp: 123.12.12.123
+
+
+mybatis-plus:
+  type-aliases-package: com.leyou.item.entity #包扫描
+  global-config:
+    db-config:
+      id-type: auto #主键生成策略 auto，数据库自增
+      insert-strategy: NOT_EMPTY #属性为空，sql语句不包含此属性
+      update-strategy: NOT_EMPTY
